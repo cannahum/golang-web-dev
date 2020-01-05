@@ -13,6 +13,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+	fmt.Println("Listening at 8080")
 	defer li.Close()
 
 	for {
