@@ -1,34 +1,42 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
 	"text/template"
 )
 
-var indexVisit int
-var meVisit int
-var dogVisit int
-
 var tpl *template.Template
 
-
+var indexVisit int
+var dogVisit int
+var meVisit int
 
 func init() {
-	tpl = template.Must(template.ParseFiles("tpl.gohtml"))
+	tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
 }
 
 func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		_, _ = fmt.Fprintf(w, "Welcome to the Page")
+		var s bytes.Buffer
+		indexVisit++
+		tpl.ExecuteTemplate(&s, "index.gohtml", indexVisit)
+		_, _ = fmt.Fprintf(w, s.String())
 	})
 	http.HandleFunc("/dog", func(w http.ResponseWriter, req *http.Request) {
-		_, _ = fmt.Fprintf(w, "Welcome to the Dog Section")
+		var s bytes.Buffer
+		dogVisit++
+		tpl.ExecuteTemplate(&s, "dog.gohtml", dogVisit)
+		_, _ = fmt.Fprintf(w, s.String())
 	})
 	http.HandleFunc("/me", func(w http.ResponseWriter, req *http.Request) {
-		_, _ = fmt.Fprintf(w, "About me")
+		var s bytes.Buffer
+		meVisit++
+		tpl.ExecuteTemplate(&s, "me.gohtml", meVisit)
+		_, _ = fmt.Fprintf(w, s.String())
 	})
 
 	err := http.ListenAndServe(":8080", nil)
