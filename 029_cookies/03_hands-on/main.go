@@ -10,6 +10,7 @@ import (
 const cookieName = "website-visit-counter"
 
 func main() {
+	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", http.HandlerFunc(foo))
 }
 
@@ -19,12 +20,11 @@ func foo(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println("Could not read cookie", err.Error())
 	} else {
-		c, err := strconv.ParseInt(c1.Value, 10, 32)
+		c, err := strconv.Atoi(c1.Value)
 		if err != nil {
 			log.Println("Could not parse int", err.Error())
-		} else {
-			count = int(c)
 		}
+		count = c
 	}
 
 	http.SetCookie(w, &http.Cookie{
