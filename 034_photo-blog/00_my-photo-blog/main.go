@@ -14,12 +14,12 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/", index)
+	http.Handle("/", NewEnsureSession(index))
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	fmt.Println("listening at :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func index(w http.ResponseWriter, req *http.Request) {
-	tpl.ExecuteTemplate(w, "index.gohtml", nil)
+func index(w http.ResponseWriter, req *http.Request, cookieValue string) {
+	tpl.ExecuteTemplate(w, "index.gohtml", cookieValue)
 }
