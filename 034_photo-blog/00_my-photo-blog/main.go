@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var tpl *template.Template
@@ -20,6 +21,21 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func index(w http.ResponseWriter, req *http.Request, cookieValue string) {
-	tpl.ExecuteTemplate(w, "index.gohtml", cookieValue)
+func index(w http.ResponseWriter, r *http.Request, c *http.Cookie) {
+	if r.Method == http.MethodPost {
+		imageName := r.FormValue("image-name")
+		if imageName == "" {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			currentValue := c.Value
+			if !strings.Contains(currentValue, imageName) {
+				newValue := strings.Join([]string{currentValue, imageName}, "|")
+				c.Value = newValue
+				http.SetCookie(w, c)
+			}
+		}
+	}
+
+	values := strings.Split(c.Value, "|")
+	tpl.ExecuteTemplate(w, "index.gohtml", values)
 }

@@ -5,7 +5,15 @@
   <title>My Photo Blog</title>
 </head>
 <body>
-  <h3>Welcome to Index</h3>
-  <p>Your cookie value is {{.}}</p>
+  <h2>Welcome to Index</h2>
+  <h3>Your cookie values:</h3>
+  {{range .}}
+    <p>{{.}}</p>
+  {{end}}
+
+  <form method="POST">
+    <input type="text" name="image-name"/>
+    <input type="submit">
+  </form>
 </body>
 </html>

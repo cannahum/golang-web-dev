@@ -7,8 +7,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type SessionHandler func(http.ResponseWriter, *http.Request, string)
+// SessionHandler is a function that handles a request and also takes a 3rd parameter of cookie value (string)
+type SessionHandler func(http.ResponseWriter, *http.Request, *http.Cookie)
 
+// SessionMiddleware calls the handler (of type SessionHandler) with cookie
 type SessionMiddleware struct {
 	handler SessionHandler
 }
@@ -23,11 +25,14 @@ func (sh *SessionMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Name:  "session",
 			Value: sessionID.String(),
 		}
+
+		http.SetCookie(w, c)
 	}
 
-	sh.handler(w, r, c.Value)
+	sh.handler(w, r, c)
 }
 
+// NewEnsureSession returns a new sessionMiddleware
 func NewEnsureSession(handlerToWrap SessionHandler) *SessionMiddleware {
 	return &SessionMiddleware{handlerToWrap}
 }
