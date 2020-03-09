@@ -6,13 +6,13 @@
 </head>
 <body>
   <h2>Welcome to Index</h2>
-  <h3>Your cookie values:</h3>
+  <h3>Your uploads:</h3>
   {{range .}}
-    <p>{{.}}</p>
+    <img src="/public/pics/{{.}}" width="400px"/>
   {{end}}
 
-  <form method="POST">
-    <input type="text" name="image-name"/>
+  <form method="post" enctype="multipart/form-data">
+    <input type="file" name="nf">
     <input type="submit">
   </form>
 </body>
