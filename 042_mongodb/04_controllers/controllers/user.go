@@ -3,9 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/GoesToEleven/golang-web-dev/042_mongodb/04_controllers/models"
-	"github.com/julienschmidt/httprouter"
 	"net/http"
+
+	"github.com/cannahum/golang-web-dev/042_mongodb/04_controllers/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 type UserController struct{}
