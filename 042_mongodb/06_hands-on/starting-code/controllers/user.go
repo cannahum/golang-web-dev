@@ -3,39 +3,26 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/GoesToEleven/golang-web-dev/040_mongodb/06_hands-on/starting-code/models"
-	"github.com/julienschmidt/httprouter"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
+
+	"github.com/cannahum/golang-web-dev/042_mongodb/06_hands-on/starting-code/models"
+	"github.com/julienschmidt/httprouter"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserController struct {
-	session *mgo.Session
+	registry map[string]*models.User
 }
 
-func NewUserController(s *mgo.Session) *UserController {
+func NewUserController(s map[string]*models.User) *UserController {
 	return &UserController{s}
 }
 
 func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	// Grab id
 	id := p.ByName("id")
-
-	// Verify id is ObjectId hex representation, otherwise return status not found
-	if !bson.IsObjectIdHex(id) {
-		w.WriteHeader(http.StatusNotFound) // 404
-		return
-	}
-
-	// ObjectIdHex returns an ObjectId from the provided hex representation.
-	oid := bson.ObjectIdHex(id)
-
-	// composite literal
-	u := models.User{}
-
-	// Fetch user
-	if err := uc.session.DB("go-web-dev-db").C("users").FindId(oid).One(&u); err != nil {
+	u, ok := uc.registry[id]
+	if !ok {
 		w.WriteHeader(404)
 		return
 	}
@@ -54,10 +41,15 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 	json.NewDecoder(r.Body).Decode(&u)
 
 	// create bson ID
-	u.Id = bson.NewObjectId()
+	newID, err := uuid.NewV4()
+	if err != nil {
+		fmt.Println(err.Error())
+		w.WriteHeader(404)
+		return
+	}
 
-	// store the user in mongodb
-	uc.session.DB("go-web-dev-db").C("users").Insert(u)
+	u.Id = newID.String()
+	uc.registry[u.Id] = &u
 
 	uj, _ := json.Marshal(u)
 
@@ -67,21 +59,16 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 }
 
 func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	// Grab id
 	id := p.ByName("id")
-
-	if !bson.IsObjectIdHex(id) {
+	_, ok := uc.registry[id]
+	if !ok {
 		w.WriteHeader(404)
 		return
 	}
 
-	oid := bson.ObjectIdHex(id)
-
-	// Delete user
-	if err := uc.session.DB("go-web-dev-db").C("users").RemoveId(oid); err != nil {
-		w.WriteHeader(404)
-		return
-	}
+	delete(uc.registry, id)
 
 	w.WriteHeader(http.StatusOK) // 200
-	fmt.Fprint(w, "Deleted user", oid, "\n")
+	fmt.Fprint(w, "Deleted user", id, "\n")
 }
