@@ -8,6 +8,7 @@ import (
 	"github.com/cannahum/golang-web-dev/042_mongodb/05_mongodb/02_update-user-model/models"
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type UserController struct {
@@ -23,7 +24,7 @@ func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httpr
 		Name:   "James Bond",
 		Gender: "male",
 		Age:    32,
-		Id:     p.ByName("id"),
+		Id:     bson.ObjectId(p.ByName("id")),
 	}
 
 	uj, err := json.Marshal(u)
