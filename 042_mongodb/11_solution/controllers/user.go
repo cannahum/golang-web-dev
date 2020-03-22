@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/GoesToEleven/golang-web-dev/042_mongodb/11_solution/models"
-	"github.com/GoesToEleven/golang-web-dev/042_mongodb/11_solution/session"
-	"github.com/satori/go.uuid"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
+
+	"github.com/cannahum/golang-web-dev/042_mongodb/11_solution/models"
+	"github.com/cannahum/golang-web-dev/042_mongodb/11_solution/session"
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (c Controller) SignUp(w http.ResponseWriter, req *http.Request) {

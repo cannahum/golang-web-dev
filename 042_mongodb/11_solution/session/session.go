@@ -2,10 +2,11 @@ package session
 
 import (
 	"fmt"
-	"github.com/GoesToEleven/golang-web-dev/042_mongodb/11_solution/models"
-	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
+
+	"github.com/cannahum/golang-web-dev/042_mongodb/11_solution/models"
+	uuid "github.com/satori/go.uuid"
 )
 
 const Length int = 30
