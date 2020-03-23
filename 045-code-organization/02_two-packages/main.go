@@ -2,9 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"github.com/GoesToEleven/golang-web-dev/045-code-organization/02_two-packages/models"
 	"html/template"
 	"net/http"
+
+	"github.com/cannahum/golang-web-dev/045-code-organization/02_two-packages/models"
 )
 
 var tpl *template.Template
